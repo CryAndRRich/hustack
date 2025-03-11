@@ -62,7 +62,7 @@ The result $a.b$
 We implement the **Karatsuba algorithm** for multiplying large numbers represented as strings. The Karatsuba algorithm is a **divide and conquer** approach that significantly reduces the number of single-digit multiplications compared to the traditional **grade-school multiplication method**.
 
 ### Karatsuba Multiplication Algorithm
-- **Overview:** The Karatsuba algorithm is a divide-and-conquer method that reduces the multiplication of two $ n $-digit numbers from $ O(n^2) $ to approximately $ O(n^{1.585}) $. It does this by splitting the numbers into halves and recursively calculating three products instead of four.
+- **Overview:** The Karatsuba algorithm is a divide-and-conquer method that reduces the multiplication of two $n$-digit numbers from $O(n^2)$ to approximately $O(n^{1.585})$. It does this by splitting the numbers into halves and recursively calculating three products instead of four.
 
 - **Steps in the Code:**  
   **Preprocessing:**  
@@ -73,9 +73,9 @@ We implement the **Karatsuba algorithm** for multiplying large numbers represent
     - Each number is split into a high part (first half) and a low part (second half).
   
   **Recursive Multiplications:**  
-    - $ Z_2 = \text{karatsuba}(X_{high}, Y_{high}) $
-    - $ Z_0 = \text{karatsuba}(X_{low}, Y_{low}) $
-    - $ Z_1 = \text{karatsuba}(X_{high} + X_{low}, Y_{high} + Y_{low}) - Z_2 - Z_0 $
+    - $Z_2 = \text{karatsuba}(X_{high}, Y_{high})$
+    - $Z_0 = \text{karatsuba}(X_{low}, Y_{low})$
+    - $Z_1 = \text{karatsuba}(X_{high} + X_{low}, Y_{high} + Y_{low}) - Z_2 - Z_0$
   
   **Combining the Results:**  
     - The final result is computed as:  
