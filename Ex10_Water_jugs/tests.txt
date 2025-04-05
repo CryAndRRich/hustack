@@ -1,0 +1,14 @@
+Input: 136 288 24
+Output: 42
+
+Input: 6 8 4
+Output: 4
+
+Input: 16 98 12
+Output: 28
+
+Input: 536 488 24
+Output: 124
+
+Input: 536 978 24
+Output: 676
