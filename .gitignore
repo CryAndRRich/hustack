@@ -3,10 +3,3 @@
 __pycache__/
 
 *.txt
-*.c
-*.cpp
-*.py
-
-!codes/*.c
-!codes/*.cpp
-!codes/*.py
