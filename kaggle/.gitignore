@@ -1,0 +1,12 @@
+.vscode/
+
+__pycache__/
+
+*.pth
+*.h5
+*.pkl
+
+*.txt
+*.csv
+!data/*.txt
+!data/*.csv
