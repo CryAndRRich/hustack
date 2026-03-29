@@ -7,7 +7,7 @@ Given a **directed graph** $G = (V, E)$ where $V = {1, \dots, N}$ is the set of 
 
 **Output**: A single integer - the total number of strongly connected components in $G$.
 
-## Approach 1: Kosaraju’s Algorithm
+## Approach 1: Kosaraju's Algorithm
 - Perform a depth-first search (DFS) on the original graph.
 - Record the vertices in a list (or stack) in the order of their **finishing times** (i.e., push a vertex onto the stack after all its outgoing edges have been explored).
 - Reverse the direction of every arc in $E$ to obtain the **transpose graph** $G^T$.
@@ -26,7 +26,7 @@ Given a **directed graph** $G = (V, E)$ where $V = {1, \dots, N}$ is the set of 
 - Stack for finishing times: $O(N)$
 - Visited marker array: $O(N)$
 
-## Approach 2: Tarjan’s Algorithm
+## Approach 2: Tarjan's Algorithm
 - Maintain an index counter initialized to 0.
 - For each unvisited vertex $v$, start a DFS:
     - Assign $index[v] = lowlink[v] = ++counter$.
@@ -44,7 +44,7 @@ Given a **directed graph** $G = (V, E)$ where $V = {1, \dots, N}$ is the set of 
 - Arrays $index[\,]$, $lowlink[\,]$, and on-stack flags: $O(N)$
 - DFS stack (implicit) and explicit node stack: $O(N)$
 
-## Approach 3: Gabow’s Algorithm
+## Approach 3: Gabow's Algorithm
 - Maintain an index counter.
 - For each unvisited vertex $v$, start DFS:
     - Assign $index[v] = ++counter$.

@@ -25,7 +25,7 @@ Given an **undirected connected graph** $G = (V, E)$ where $V = \{1, \dots, N\}$
 
 **Space Complexity:** $O(N + M)$ to store edges and DSU arrays
 
-## Approach 2: Prim’s Algorithm
+## Approach 2: Prim's Algorithm
 - Start from any arbitrary vertex (e.g., vertex 1)
 - Maintain a boolean array $in_mst[1..N]$ to mark which vertices are already in the MST
 - Use a min-heap (priority queue) keyed by edge weight to store all “crossing” edges $(u, v)$ where $u$ is in the MST and $v$ is not yet in the MST
@@ -42,7 +42,7 @@ Given an **undirected connected graph** $G = (V, E)$ where $V = \{1, \dots, N\}$
 
 **Space Complexity:** $O(N + M)$ for adjacency lists + heap storage.
 
-## Approach 3: Borůvka’s Algorithm
+## Approach 3: Borůvka's Algorithm
 - Initially, treat each vertex as its own component (so there are $N$ components)
 - In each round, for **every component** $C$:  
     - Scan all edges $(u, v)$ where $u \in C$, and pick the minimum-weight edge $(u,v)$ such that $v$ lies in a different component

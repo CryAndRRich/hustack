@@ -12,3 +12,5 @@ Folder | Competition                                          |
 |math_exam| [Tutors - expected math exam results](https://www.kaggle.com/competitions/tutors-expected-math-exam-results)
 |delayed_flight| [mlcourse.ai: Flight delays](https://www.kaggle.com/competitions/flight-delays-fall-2018)
 |housing_price_2| [Prediction interval competition II: House price](https://www.kaggle.com/competitions/prediction-interval-competition-ii-house-price)
+|calories| [Predict Calorie Expenditure](https://www.kaggle.com/competitions/playground-series-s5e5)
+|dataflow2026| Private competition
