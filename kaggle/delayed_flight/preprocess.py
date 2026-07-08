@@ -33,8 +33,8 @@ class Data():
 
     def mi_scores_dataset(self) -> pd.Series:
         df = self.data[self.data["id"] > 99999].copy()
-        y = df.pop("dep_delayed_15min") 
-        df.pop("dep_delayed_15min") 
+        y = df.pop("dep_delayed_15min")
+        df.pop("id")
 
         for colname in df.select_dtypes(["object", "category"]):
             df[colname], _ = df[colname].factorize()
@@ -79,7 +79,7 @@ class Data():
 
         days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         day_in_year = {1: 0}
-        for num in range(1, 12): 
+        for num in range(1, 12):
             day_in_year[num + 1] = sum(days_in_month[0:num])
 
         self.data["DayInYear"] = self.data["Month"].map(day_in_year) + self.data["DayofMonth"]

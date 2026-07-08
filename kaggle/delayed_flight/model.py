@@ -63,7 +63,7 @@ class DelayedFLightModel():
                 **self.best_params_xgb,
                 eval_metric="auc",
                 random_state=42,
-                n_jobs= -1
+                n_jobs=-1
             ))
         ])
 
@@ -87,7 +87,7 @@ class DelayedFLightModel():
                 reg_lambda=reg_lambda,
                 eval_metric="auc",
                 random_state=42,
-                n_jobs= -1
+                n_jobs=-1
             )
             pipe = Pipeline([
                 ("preprocessor", self.preprocessor),

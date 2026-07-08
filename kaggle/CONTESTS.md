@@ -14,3 +14,7 @@ Folder | Competition                                          |
 |housing_price_2| [Prediction interval competition II: House price](https://www.kaggle.com/competitions/prediction-interval-competition-ii-house-price)
 |calories| [Predict Calorie Expenditure](https://www.kaggle.com/competitions/playground-series-s5e5)
 |dataflow2026| Private competition
+|sensors| [SVM Margin Challenge: Detect Faulty Sensors](https://www.kaggle.com/competitions/svm-margin-challenge-detect-faulty-sensors)
+|customer| [Ensemble Learning - Machine Learning](https://www.kaggle.com/competitions/ensemble-learning-machine-learning)
+|geology| [ROGII - Wellbore Geology Prediction](https://www.kaggle.com/competitions/rogii-wellbore-geology-prediction)
+|soil_grain| [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos)

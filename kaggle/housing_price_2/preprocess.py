@@ -1,4 +1,4 @@
-import numpy as np 
+import numpy as np
 import pandas as pd
 import os
 
@@ -30,7 +30,7 @@ class Data():
 
     def __drop_uninformative(self) -> None:
         self.data = self.data.drop(
-            columns = ["sale_date", "view_rainier", "view_olympics",
+            columns=["sale_date", "view_rainier", "view_olympics",
                        "view_cascades", "view_territorial", "view_skyline",
                        "view_sound", "view_lakewash", "view_lakesamm",
                        "view_otherwater", "view_other", "wfnt", "golf",
@@ -200,7 +200,7 @@ class Data():
         self.__house_processed()
         self.__subdivision_processed()
         self.__location_processed()
-        self.__k_means() 
+        self.__k_means()
         self.__drop_uninformative()
     
     def save_csv(self) -> str:

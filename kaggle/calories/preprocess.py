@@ -108,7 +108,7 @@ class Data():
                 return bmr * 1.725
             else:
                 return bmr * 1.9
-        self.data["TDEE"] = self.data.apply(calc_tdee, axis = 1)
+        self.data["TDEE"] = self.data.apply(calc_tdee, axis=1)
 
         self.data["Metabolic_Efficiency"] = self.data["BMR"] * (self.data["Heart_Rate"] / self.data["BMR"].median())
         

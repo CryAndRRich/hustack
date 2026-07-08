@@ -84,7 +84,7 @@ class CaloriesModel():
                 colsample_bytree=colsample_bytree,
                 gamma=gamma,
                 random_state=42,
-                n_jobs= -1
+                n_jobs=-1
             )
             pipe = Pipeline([
                 ("preprocessor", self.preprocessor),

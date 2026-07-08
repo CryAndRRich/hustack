@@ -57,8 +57,8 @@ class Data():
             
             text = re.sub(r"[^a-zA-Z0-9\s\.\?\!]", " ", text)
             
-            text = re.sub(r"(\d+)([a-zA-Z])", r"\1 \2", text)  
-            text = re.sub(r"([a-zA-Z])(\d+)", r"\1 \2", text)  
+            text = re.sub(r"(\d+)([a-zA-Z])", r"\1 \2", text)
+            text = re.sub(r"([a-zA-Z])(\d+)", r"\1 \2", text)
             
             text = re.sub(r"\s+", " ", text).strip().lower()
             
