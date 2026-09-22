@@ -17,7 +17,7 @@ class Data():
 
         train_data = pd.read_csv(train_file_path)
         test_data = pd.read_csv(test_file_path)
-        
+
         self.data = pd.concat([train_data, test_data], axis=0, ignore_index=True)
 
         self.data["Transported"] = self.data["Transported"].fillna(-1)
@@ -40,12 +40,12 @@ class Data():
     def mi_scores(self) -> pd.Series:
         X = self.data.loc[self.data["Transported"] != -1].copy()
         y = X.pop("Transported")
-        
+
         for colname in X.select_dtypes(include=["object", "category"]).columns:
             X[colname], _ = X[colname].factorize()
-        
+
         discrete_features = [pd.api.types.is_integer_dtype(t) for t in X.dtypes]
-        
+
         mi_scores = mutual_info_classif(X, y, discrete_features=discrete_features, random_state=0)
         mi_scores = pd.Series(mi_scores, name="MI Scores", index=X.columns)
         mi_scores = mi_scores.sort_values(ascending=False)
@@ -60,13 +60,13 @@ class Data():
     def baseline_score(self, model: XGBClassifier = XGBClassifier()) -> None:
         X = self.data.loc[self.data["Transported"] != -1].copy()
         y = X.pop("Transported")
-        
+
         for colname in X.select_dtypes(include=["object", "category"]).columns:
             X[colname], _ = X[colname].factorize()
-        
+
         accuracy = cross_val_score(model, X, y, cv=5, scoring="accuracy").mean()
         roc_auc = cross_val_score(model, X, y, cv=5, scoring="roc_auc").mean()
-        
+
         print(f"Baseline Accuracy: {accuracy:.5f}")
         print(f"Baseline ROC AUC: {roc_auc:.5f}")
 
@@ -83,7 +83,7 @@ class Data():
             )
         )
         self.data["HomePlanet"] = self.data["HomePlanet"].fillna(self.data["HomePlanet"].mode()[0])
-        
+
         self.data["Destination"] = self.data["Destination"].fillna(
             self.data.groupby("Group")["Destination"].transform(
                 lambda s: s.mode().iloc[0] if not s.mode().empty else np.nan
@@ -141,17 +141,17 @@ class Data():
 
         self.data.loc[self.data["Active"] == True, "CryoSleep"] = self.data.loc[self.data["Active"] == True, "CryoSleep"].fillna(0)
         self.data.loc[self.data["Active"] == False, "CryoSleep"] = self.data.loc[self.data["Active"] == False, "CryoSleep"].fillna(1)
-        
+
         self.data.loc[self.data["CryoSleep"] == 1, ["RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"]] = \
             self.data.loc[self.data["CryoSleep"] == 1, ["RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"]].fillna(0)
-        
+
         self.data["RoomService"] = self.data["RoomService"].fillna(self.data.groupby(["CryoSleep"])["RoomService"].transform("median"))
         self.data["FoodCourt"] = self.data["FoodCourt"].fillna(self.data.groupby(["CryoSleep"])["FoodCourt"].transform("median"))
         self.data["ShoppingMall"] = self.data["ShoppingMall"].fillna(self.data.groupby(["CryoSleep"])["ShoppingMall"].transform("median"))
         self.data["Spa"] = self.data["Spa"].fillna(self.data.groupby(["CryoSleep"])["Spa"].transform("median"))
         self.data["VRDeck"] = self.data["VRDeck"].fillna(self.data.groupby(["CryoSleep"])["VRDeck"].transform("median"))
 
-        self.data["TotalBill"] = (self.data["RoomService"] + self.data["FoodCourt"] + 
+        self.data["TotalBill"] = (self.data["RoomService"] + self.data["FoodCourt"] +
                                   self.data["ShoppingMall"] + self.data["Spa"] + self.data["VRDeck"])
 
         bill_med = self.data["TotalBill"].mean()
@@ -160,31 +160,31 @@ class Data():
             if pd.isna(row["VIP"]):
                 return int(row["TotalBill"] >= bill_med)
             return row["VIP"]
-        
+
         self.data["VIP"] = self.data.apply(fill_vip, axis=1)
 
         dest = pd.get_dummies(self.data["Destination"], prefix="Hp").mul(self.data["TotalBill"], axis=0)
         self.data = self.data.join(dest)
-    
+
     def __k_means(self):
         cluster_features = ["VRDeck", "Spa", "ShoppingMall", "FoodCourt", "RoomService", "TotalBill"]
-        
+
         X_scaled = self.data.loc[:, cluster_features]
         X_scaled = (X_scaled - X_scaled.mean(axis=0)) / X_scaled.std(axis=0)
-        
+
         kmeans = KMeans(n_clusters=10, n_init=50, random_state=0)
         self.data["Cluster"] = kmeans.fit_predict(X_scaled)
-        
+
         distances = kmeans.transform(X_scaled)
-        
+
         distances_df = pd.DataFrame(
-            distances, 
+            distances,
             columns=[f"Centroid{i}" for i in range(distances.shape[1])],
             index=self.data.index
         )
-        
+
         self.data = self.data.join(distances_df)
-    
+
     def data_processed(self):
         self.__id_processed()
         self.__location_processed()

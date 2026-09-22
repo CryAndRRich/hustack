@@ -1,7 +1,3 @@
-# Updated on May 5, 2025, 10:10 PM
-# Public Score: 0.7756
-# Rank: 182/229
-
 import pandas as pd
 import numpy as np
 import os
@@ -13,18 +9,18 @@ from scipy.sparse import hstack, vstack
 from preprocess import Data
 
 class MathProblemModel():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         data_path = os.path.join(self.data_dir, data_processed_path)
-        
+
         data = pd.read_csv(data_path)
 
         self.train_data = data[data["id"] == -1].copy()
         self.test_data = data[data["id"] != -1].copy()
         self.text_vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
-        
+
         self.test_ids = self.test_data["id"].astype(int).values
 
         self.X_text_train = self.text_vectorizer.fit_transform(self.train_data["Question"])
@@ -42,14 +38,14 @@ class MathProblemModel():
 
     def predict(self) -> None:
         self.topic_map = {
-            0: 0,  # Algebra
-            1: 1,  # Geometry/Trigonometry
-            2: 2,  # Calculus/Analysis
-            3: 2,  # Probability/Statistics
-            4: 3,  # Number Theory
-            5: 3,  # Combinatorics/Discrete
-            6: 0,  # Linear Algebra
-            7: 0   # Abstract Algebra/Topology
+            0: 0,
+            1: 1,
+            2: 2,
+            3: 2,
+            4: 3,
+            5: 3,
+            6: 0,
+            7: 0
         }
         y_group = np.array([self.topic_map[y] for y in self.y_train])
         group_ids = sorted(set(y_group))
@@ -95,11 +91,10 @@ class MathProblemModel():
             "id": self.test_ids,
             "label": global_predictions
         })
-        
+
         output_file = os.path.join(self.data_dir, "math_prob_submission.csv")
         submission.to_csv(output_file, index=False)
         print("Submission saved to math_prob_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "math_prob/data"

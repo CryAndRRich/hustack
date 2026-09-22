@@ -1,7 +1,3 @@
-# Updated on July 9, 2026, 1:58 AM
-# Public Score: 82.56482
-# Rank: 40/50
-
 import os
 import warnings
 import numpy as np
@@ -65,12 +61,12 @@ class SoilGrainNet(nn.Module):
         )
 
     def forward(self, img: torch.Tensor, domain_feat: torch.Tensor) -> torch.Tensor:
-        feat = self.encoder(img)                         
-        feat = torch.cat([feat, domain_feat], dim=1)      
-        logits = self.head(feat)                          
+        feat = self.encoder(img)
+        feat = torch.cat([feat, domain_feat], dim=1)
+        logits = self.head(feat)
 
-        increments = F.softmax(logits, dim=1)             
-        csd = torch.cumsum(increments, dim=1) * 100.0    
+        increments = F.softmax(logits, dim=1)
+        csd = torch.cumsum(increments, dim=1) * 100.0
         return csd
 
 
@@ -148,7 +144,7 @@ class SoilGrainModel:
             optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
             scaler = GradScaler()
             criterion = LogEMDLoss().to(self.device)
-            tr_loader = self._loader(self.train_df.iloc[tr_idx], "train", True,  True)
+            tr_loader = self._loader(self.train_df.iloc[tr_idx], "train", True, True)
             va_loader = self._loader(self.train_df.iloc[va_idx], "train", False, False)
 
             for _ in range(5):
@@ -182,9 +178,9 @@ class SoilGrainModel:
                 optimizer, T_max=self.EPOCHS, eta_min=lr / 100
             )
             scaler = GradScaler()
-            tr_loader = self._loader(self.train_df.iloc[tr_idx], "train", True,  True)
+            tr_loader = self._loader(self.train_df.iloc[tr_idx], "train", True, True)
             va_loader = self._loader(self.train_df.iloc[va_idx], "train", False, False)
-            te_loader = self._loader(self.test_df,               "test",  False, False)
+            te_loader = self._loader(self.test_df, "test", False, False)
 
             best_val = float("inf")
             for epoch in range(self.EPOCHS):
@@ -238,7 +234,6 @@ class SoilGrainModel:
         print("Hardest samples (highest OOF EMD):")
         print(by_sample.head(10).to_string())
         return by_sample
-
 
 if __name__ == "__main__":
     data_path = "soil_grain/data"

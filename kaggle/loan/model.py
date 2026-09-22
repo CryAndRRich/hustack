@@ -1,7 +1,3 @@
-# Updated on April 23, 2025, 05:22 PM
-# Public Score: 0.53957
-# Rank: 45/217
-
 import os
 from typing import List, Tuple
 
@@ -20,8 +16,8 @@ from bayes_opt import BayesianOptimization
 from preprocess import Data
 
 class LoanModel():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         data_path = os.path.join(self.data_dir, data_processed_path)
@@ -179,7 +175,6 @@ class LoanModel():
         outfile = os.path.join(self.data_dir, "loan_submission.csv")
         self.submission.to_csv(outfile, index=False)
         print("Submission saved to loan_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "loan/data"

@@ -1,7 +1,3 @@
-# Updated on March 30, 2025, 05:42 PM
-# Public Score: 0.001
-# Rank: 20/44
-
 import os
 import pandas as pd
 
@@ -15,17 +11,17 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from preprocess import Data
 
 class MolecularModel():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         data_path = os.path.join(self.data_dir, data_processed_path)
-        
+
         data = pd.read_csv(data_path)
 
         self.train_data = data[data["Batch_ID"].str.contains("Train")].copy()
         self.test_data = data[data["Batch_ID"].str.contains("Test")].copy()
-        
+
         self.test_ids = self.test_data["Batch_ID"]
 
         self.X_train = self.train_data.drop(columns=["Batch_ID", "T80"])
@@ -80,11 +76,10 @@ class MolecularModel():
             "Batch_ID": self.test_ids,
             "T80": predictions + surprise_c
         })
-        
+
         output_file = os.path.join(self.data_dir, "molecular_submission.csv")
         submission.to_csv(output_file, index=False)
         print("Submission saved to molecular_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "molecular/data"

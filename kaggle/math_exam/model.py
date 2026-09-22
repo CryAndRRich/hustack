@@ -1,7 +1,3 @@
-# Updated on May 17, 2025, 09:50 PM
-# Public Score: 0.78406
-# Rank: 9/151
-
 import os
 import pandas as pd
 
@@ -12,8 +8,8 @@ from bayes_opt import BayesianOptimization
 from preprocess import Data
 
 class MathExamModel():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         csv_path = os.path.join(self.data_dir, data_processed_path)
@@ -94,7 +90,6 @@ class MathExamModel():
         output_file = os.path.join(self.data_dir, "math_exam_submission.csv")
         submission.to_csv(output_file, index=False)
         print("Submission saved to math_exam_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "math_exam/data"

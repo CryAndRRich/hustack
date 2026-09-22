@@ -35,8 +35,8 @@ class Data():
 
     def mi_scores_dataset(self) -> pd.Series:
         df = self.data[self.data["Id"] <= 7499].copy()
-        y = df.pop("Credit Default")  
-        df.pop("Id") 
+        y = df.pop("Credit Default")
+        df.pop("Id")
 
         for colname in df.select_dtypes(["object", "category"]):
             df[colname], _ = df[colname].factorize()
@@ -171,7 +171,6 @@ class Data():
         self.data.to_csv(output_file, index=False)
         print("Data saved to processed_data.csv!")
         return "processed_data.csv"
-
 
 if __name__ == "__main__":
     data_path = "loan/data"

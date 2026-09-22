@@ -1,8 +1,3 @@
-# Updated on June 12, 2026, 8:01 PM
-# Public Score: 0.89201
-# Private Score: 0.89144
-# Rank: 1/39
-
 import os
 import warnings
 import numpy as np
@@ -165,7 +160,6 @@ class SensorsModel():
         outfile = os.path.join(self.data_dir, "sensors_submission.csv")
         submission.to_csv(outfile, index=False)
         print("Submission saved to sensors_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "sensors/data"

@@ -60,7 +60,6 @@ class CFG:
     BLEND_W_B = 0.70
     BLEND_W_SP45 = 0.55
 
-
 FORMATIONS = ["ANCC", "ASTNU", "ASTNL", "EGFDU", "EGFDL", "BUDA"]
 PLANE_K = 10
 DENSE_SPW = 60
@@ -69,17 +68,17 @@ NCPU = min(4, multiprocessing.cpu_count())
 
 BEAMS = [
     (10, 20.0, 144.0, 2, "cons"),
-    (10,  8.0,  64.0, 2, "loose"),
+    (10, 8.0, 64.0, 2, "loose"),
     ( 8, 35.0, 220.0, 1, "vcons"),
-    (10, 14.0,  90.0, 5, "sm5"),
-    (20,  4.0,  36.0, 3, "vloose"),
+    (10, 14.0, 90.0, 5, "sm5"),
+    (20, 4.0, 36.0, 3, "vloose"),
     (12, 12.0, 100.0, 3, "mid"),
     (15, 25.0, 180.0, 2, "stiff"),
 ]
 
 ANCH_OFFS = np.array([-80, -40, -20, -10, -5, 0, 5, 10, 20, 40, 80], np.float32)
 BEAM_OFFS = np.array([-40, -20, -10, -5, -3, 0, 3, 5, 10, 20, 40], np.float32)
-SC_OFFS = np.array([-30, -15,  -8,  -4, -2, 0, 2,  4,  8, 15, 30], np.float32)
+SC_OFFS = np.array([-30, -15, -8, -4, -2, 0, 2, 4, 8, 15, 30], np.float32)
 PF_OFFS = SC_OFFS.copy()
 
 PF_N = 600
@@ -882,13 +881,11 @@ def _well_traj_features(kn):
         "TQG_Q3D": float(np.sqrt(TQG_inc ** 2 + TQG_azi ** 2)),
     }
 
-
 _FI = None
 _DI = None
 
 
 def build_well(hw_path, tw_path, is_train):
-    global _FI, _DI
     wid = Path(hw_path).stem.replace("__horizontal_well", "")
     try:
         hw = pd.read_csv(hw_path)
@@ -1203,7 +1200,6 @@ def run_pf_lik_ensemble_scales(hw, tw, scales=SELECTOR_SCALES, n_particles=500, 
     out["pf_mean"] = hw["TVT_input"].values.astype(float).copy()
     out["pf_mean"][list(ev.index)] = preds.mean(0)
     return out
-
 
 _md = np.linspace(1, 50, 20, np.float64)
 _z = np.zeros(20, np.float64)

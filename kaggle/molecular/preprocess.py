@@ -20,7 +20,7 @@ class Data():
 
         train_data = pd.read_csv(train_file_path)
         test_data = pd.read_csv(test_file_path)
-        
+
         self.data = pd.concat([train_data, test_data], axis=0, ignore_index=True)
 
     def __drop_uninformative(self) -> None:
@@ -33,9 +33,9 @@ class Data():
         y = X.pop("T80")
         X.pop("Batch_ID")
         X.pop("Smiles")
-            
+
         discrete_features = [pd.api.types.is_integer_dtype(t) for t in X.dtypes]
-        
+
         mi_scores = mutual_info_regression(X, y, discrete_features=discrete_features, random_state=0)
         mi_scores = pd.Series(mi_scores, name="MI Scores", index=X.columns)
         mi_scores = mi_scores.sort_values(ascending=False)
@@ -48,17 +48,17 @@ class Data():
         y = X.pop("T80")
         X.pop("Batch_ID")
         X.pop("Smiles")
-        
+
         log_y = np.log(y)
-        
+
         rmsle = np.sqrt(-cross_val_score(
             model, X, log_y, cv=5, scoring="neg_mean_squared_error"
         ).mean())
-        
+
         mae = -cross_val_score(
             model, X, log_y, cv=5, scoring="neg_mean_absolute_error"
         ).mean()
-        
+
         print(f"Baseline RMSLE: {rmsle:.5f}")
         print(f"Baseline MAE (log scale): {mae:.5f}")
 
@@ -66,25 +66,25 @@ class Data():
         T_cols = [f"T{i}" for i in range(1, 21)]
         S_cols = [f"S{i}" for i in range(1, 21)]
         O_cols = [f"O{i}" for i in range(1, 21)]
-        
+
         self.data["T_mean"] = self.data[T_cols].mean(axis=1)
-        self.data["T_std"]  = self.data[T_cols].std(axis=1)
-        self.data["T_min"]  = self.data[T_cols].min(axis=1)
-        self.data["T_max"]  = self.data[T_cols].max(axis=1)
+        self.data["T_std"] = self.data[T_cols].std(axis=1)
+        self.data["T_min"] = self.data[T_cols].min(axis=1)
+        self.data["T_max"] = self.data[T_cols].max(axis=1)
         self.data["T_range"] = self.data["T_max"] - self.data["T_min"]
-        
+
         self.data["S_mean"] = self.data[S_cols].mean(axis=1)
-        self.data["S_std"]  = self.data[S_cols].std(axis=1)
-        self.data["S_min"]  = self.data[S_cols].min(axis=1)
-        self.data["S_max"]  = self.data[S_cols].max(axis=1)
+        self.data["S_std"] = self.data[S_cols].std(axis=1)
+        self.data["S_min"] = self.data[S_cols].min(axis=1)
+        self.data["S_max"] = self.data[S_cols].max(axis=1)
         self.data["S_range"] = self.data["S_max"] - self.data["S_min"]
-        
+
         self.data["min_diff_S_T"] = self.data["S_min"] - self.data["T_min"]
-        
+
         self.data["O_sum"] = self.data[O_cols].sum(axis=1)
         self.data["O_mean"] = self.data[O_cols].mean(axis=1)
         self.data["O_std"] = self.data[O_cols].std(axis=1)
-    
+
     def __smiles_processed(self) -> None:
         def gen_rdkit(df):
             smiles = df["Smiles"]
@@ -95,31 +95,31 @@ class Data():
                 AllChem.EmbedMolecule(mol3d, randomSeed=random.randint(1, 1000000))
                 AllChem.MMFFOptimizeMolecule(mol3d)
 
-                RDKitProp[d_key, 8] = rdMolDescriptors.CalcNumRotatableBonds(mol3d)   # Number of rotatable bonds
-            
+                RDKitProp[d_key, 8] = rdMolDescriptors.CalcNumRotatableBonds(mol3d)
+
             df = pd.concat([df, pd.DataFrame(RDKitProp, columns=[f"RDKit_{i}" for i in range(10)])], axis=1)
             return df
 
         self.data = gen_rdkit(self.data)
-        
+
         def compute_molecular_complexity(smiles):
             mol = Chem.MolFromSmiles(smiles)
             if mol is None:
                 return np.nan, np.nan, np.nan
-            
+
             ring_count = Descriptors.RingCount(mol)
             num_atoms = mol.GetNumAtoms()
             logP = Descriptors.MolLogP(mol)
-            
+
             complexity = ring_count * 0.5 + num_atoms * 0.3 + logP * 0.2
-            
+
             return ring_count, num_atoms, complexity
 
         self.data[["ring_count", "num_atoms", "complexity"]] = self.data["Smiles"].apply(
             lambda x: pd.Series(compute_molecular_complexity(x))
         )
 
-        self.data["size_index"] = self.data["Mass"] / (self.data["Rg"] + 1e-6)  # Avoid division by zero
+        self.data["size_index"] = self.data["Mass"] / (self.data["Rg"] + 1e-6)
         self.data["hetero_polarity"] = self.data["NumHeteroatoms"] * self.data["TPSA"]
         self.data["Ncomplexity"] = self.data["NumHeteroatoms"] + self.data["Rg"] * 0.5 + self.data["TPSA"] * 0.1
 
@@ -127,7 +127,7 @@ class Data():
         self.data["ratio_HDonors_HAcceptors"] = self.data["HDonors"] / (self.data["HAcceptors"] + 1e-6)
         self.data["mass_minus_logP"] = self.data["Mass"] - self.data["LogP"]
         self.data["total_H_bonds"] = self.data["HDonors"] + self.data["HAcceptors"]
-    
+
     def __orbital_processed(self) -> None:
         self.data["energy_gap"] = self.data["LUMO(eV)"] - self.data["HOMO(eV)"]
 
@@ -160,7 +160,7 @@ class Data():
                 ((self.data["LUMO(eV)"] + self.data["T2"] * self.data["TDOS3.2"] * self.data["LUMOp1(eV)"]) * ((self.data["LUMO(eV)"] + self.data["T2"] * self.data["TDOS3.2"] * self.data["LUMOp1(eV)"]) - self.data["TDOS3.2"]))
             )
         )
-        
+
     def data_processed(self) -> None:
         self.__energy_processed()
         self.__smiles_processed()
@@ -179,7 +179,7 @@ class Data():
 if __name__ == "__main__":
     data_path = "molecular/data"
     data = Data(data_path)
-    
+
     data.data_processed()
     data.baseline_score_dataset()
     data.save_csv()

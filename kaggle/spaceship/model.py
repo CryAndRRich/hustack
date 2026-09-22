@@ -1,7 +1,3 @@
-# Updated on March 23, 2025, 9:02 AM
-# Public Score: 0.80757
-# Rank: 88/1834
-
 import os
 import pandas as pd
 
@@ -16,17 +12,17 @@ from catboost import CatBoostClassifier
 from preprocess import Data
 
 class SpaceshipModel():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         data_path = os.path.join(self.data_dir, data_processed_path)
-        
+
         data = pd.read_csv(data_path)
 
         self.train_data = data[data["Transported"] != -1].copy()
         self.test_data = data[data["Transported"] == -1].copy()
-        
+
         self.test_passenger_ids = self.test_data["PassengerId"]
 
         self.X_train = self.train_data.drop(columns=["Transported", "PassengerId"])
@@ -67,9 +63,9 @@ class SpaceshipModel():
         self.grid_search = GridSearchCV(
             estimator=self.pipe,
             param_grid=self.param_grid,
-            cv=3,           
+            cv=3,
             scoring="accuracy",
-            n_jobs=-1,      
+            n_jobs=-1,
             verbose=2
         )
 
@@ -111,11 +107,10 @@ class SpaceshipModel():
             "PassengerId": self.test_passenger_ids,
             "Transported": predictions_bool
         })
-        
+
         output_file = os.path.join(self.data_dir, "spaceship_submission.csv")
         submission.to_csv(output_file, index=False)
         print("Submission saved to spaceship_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "spaceship/data"

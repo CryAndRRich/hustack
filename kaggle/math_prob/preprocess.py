@@ -31,7 +31,7 @@ class Data():
     def __text_processed(self) -> None:
         def clean_math_text(text):
             text = str(text)
-            
+
             math_symbols = {
                 r"\$": " dollar_expr ",
                 r"\=": " equals ",
@@ -48,22 +48,22 @@ class Data():
                 r"\∫": " integral_expr ",
                 r"\∞": " infinity_expr "
             }
-            
+
             for pattern, replacement in math_symbols.items():
                 text = re.sub(pattern, replacement, text)
-            
+
             text = re.sub(r"\\[a-zA-Z]+", " ", text)
             text = re.sub(r"\{([^}]*)\}", r" \1 ", text)
-            
+
             text = re.sub(r"[^a-zA-Z0-9\s\.\?\!]", " ", text)
-            
+
             text = re.sub(r"(\d+)([a-zA-Z])", r"\1 \2", text)
             text = re.sub(r"([a-zA-Z])(\d+)", r"\1 \2", text)
-            
+
             text = re.sub(r"\s+", " ", text).strip().lower()
-            
+
             return text
-            
+
         self.data["Question"] = self.data["Question"].apply(clean_math_text)
 
     def __math_processed(self):
@@ -72,7 +72,7 @@ class Data():
 
         self.data["numeric_token_counts"] = self.data["Question"].str.findall(r"[\d+\-*/=()<>^√π÷%\.]").str.len()
         self.data["log_numeric_token_counts"] = np.log1p(self.data["numeric_token_counts"])
-        
+
         def extract_math_features(text):
             features = {
                 "num_count": len(re.findall(r"\d+", text)),

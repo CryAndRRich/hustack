@@ -61,11 +61,11 @@ class Data():
     def __time_processed(self) -> None:
         self.data["Month"] = self.data["Month"].apply(lambda x: x.split("-")[1]).astype(int)
         def check_season(x: int) -> int:
-            if x == 12 or 1 <= x <= 2: 
+            if x == 12 or 1 <= x <= 2:
                 return "Winter"
-            elif 3 <= x <= 5: 
+            elif 3 <= x <= 5:
                 return "Spring"
-            elif 6 <= x <= 8: 
+            elif 6 <= x <= 8:
                 return "Summer"
             else:
                 return "Fall"
@@ -121,9 +121,9 @@ class Data():
                 return "Non-Holiday"
 
         self.data["HolidayType"] = self.data.apply(
-            lambda row: check_holiday(row["Month"], 
+            lambda row: check_holiday(row["Month"],
                                       row["DayofMonth"],
-                                      row["Year"]), 
+                                      row["Year"]),
             axis=1
         ).astype("category")
 
@@ -142,7 +142,7 @@ class Data():
             elif 1659 < x <= 2059:
                 return "Evening"
             return "Midnight"
-        
+
         def deptime_bin(x: int) -> str:
             if x <= 600:
                 return "vem"
@@ -206,7 +206,7 @@ class Data():
         self.data.loc[self.data["Distance"] > 2500, "DistBin"] = "very long"
         self.data["DistBin"] = self.data["DistBin"].astype("category")
         self.data = self.data.drop(columns=["Distance"])
-    
+
     def data_processed(self) -> None:
         self.__time_processed()
         self.__code_processed()

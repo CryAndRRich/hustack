@@ -1,8 +1,3 @@
-# Updated on June 12, 2026, 8:02 PM
-# Public Score: 0.89197
-# Private Score: 0.89033
-# Rank: 4/24
-
 import os
 import warnings
 import numpy as np
@@ -131,7 +126,6 @@ class CustomerModel():
         outfile = os.path.join(self.data_dir, "customer_submission.csv")
         submission.to_csv(outfile, index=False)
         print("Submission saved to customer_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "customer/data"

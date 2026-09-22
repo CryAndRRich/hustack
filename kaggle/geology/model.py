@@ -1,7 +1,3 @@
-# Updated on June 30, 2026, 0:13 AM
-# Public Score: 0.7572
-# Rank: 926/3950
-
 import subprocess
 import warnings
 import numpy as np
@@ -234,7 +230,6 @@ def train_pipeline_a(train_df, test_df, features, artifacts_path=None):
         for id_, tv in zip(grp["id"], tvt):
             sub_1_rows.append({"ID": id_, "TVT": tv})
     return pd.DataFrame(sub_1_rows)
-
 
 _FI_B = None
 _DI_B = None
@@ -795,7 +790,6 @@ def guarded_override(submission_path, data_dir, out_dir, rmse_threshold=1.0):
     if changed > 0:
         sub[["ID", "TVT"]].to_csv(submission_path, index=False)
         print(f"Guarded override: {changed} wells updated.")
-
 
 if __name__ == "__main__":
     run()

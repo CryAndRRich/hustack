@@ -1,7 +1,3 @@
-# Updated on March 18, 2025, 12:47 PM
-# Public Score: 13291.40430
-# Rank: 103/7023
-
 import os
 from typing import Tuple
 
@@ -18,19 +14,19 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from preprocess import Data
 
 class HousingPriceModel():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         data_path = os.path.join(self.data_dir, data_processed_path)
-        
+
         data = pd.read_csv(data_path)
 
         self.train_data = data[data["Id"] <= 1460].copy()
         self.test_data = data[data["Id"] > 1460].copy()
-        
+
         self.y_train = self.train_data.pop("SalePrice")
-        
+
         self.test_data.pop("SalePrice")
 
         for col in self.train_data.select_dtypes(include=["object", "category"]).columns:
@@ -90,10 +86,10 @@ class HousingPriceModel():
         )
         print("Best ensemble weights: GBR: {:.2f}, CatBoost: {:.2f}".format(self.best_w_gbr, self.best_w_cat))
 
-    def find_best_ensemble_weights(self, 
-                                   y_true: np.ndarray, 
-                                   y_pred_gbr: np.ndarray, 
-                                   y_pred_cat: np.ndarray, 
+    def find_best_ensemble_weights(self,
+                                   y_true: np.ndarray,
+                                   y_pred_gbr: np.ndarray,
+                                   y_pred_cat: np.ndarray,
                                    step: float = 0.01) -> Tuple[float, float]:
         best_w = 0.0
         best_rmsle = float("inf")
@@ -111,7 +107,7 @@ class HousingPriceModel():
 
         test_preds_gbr = np.expm1(self.pipeline_gbr.predict(self.test_data))
         test_preds_cat = np.expm1(self.pipeline_cat.predict(self.test_data))
-        
+
         ensemble_test_preds = self.best_w_gbr * test_preds_gbr + self.best_w_cat * test_preds_cat
 
         surprise_c = 2700
@@ -119,11 +115,10 @@ class HousingPriceModel():
             "Id": self.test_data.index + 1,
             "SalePrice": ensemble_test_preds + surprise_c
         })
-        
+
         output_file = os.path.join(self.data_dir, "housing_submission.csv")
         submission.to_csv(output_file, index=False)
         print("Submission saved to housing_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "housing_price/data"

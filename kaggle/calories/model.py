@@ -1,7 +1,3 @@
-# Updated on May 31, 2025, 6:32 PM
-# Public Score: 0.05777
-# Rank: 1476/4183
-
 import os
 
 import numpy as np
@@ -69,7 +65,7 @@ class CaloriesModel():
 
     def _bayes_opt(self) -> None:
         cv = KFold(n_splits=7, shuffle=True, random_state=42)
-        
+
         def xgb_cv(learning_rate: float,
                    max_depth: float,
                    subsample: float,
@@ -90,7 +86,7 @@ class CaloriesModel():
                 ("preprocessor", self.preprocessor),
                 ("xgb", model)
             ])
-        
+
             neg_mse = cross_val_score(pipe, self.X_train, self.y_train, cv=cv,
                                 scoring="neg_mean_squared_error").mean()
             rmse = np.sqrt(-neg_mse)

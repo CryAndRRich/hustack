@@ -1,7 +1,3 @@
-# Updated on March 15, 2025, 10:51 AM
-# Public Score: 0.79665
-# Rank: 837/15256
-
 import os
 from typing import Tuple
 
@@ -28,8 +24,8 @@ def to_numeric_func(x: pd.DataFrame) -> pd.DataFrame:
 
 
 class TitanicModel():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         data_path = os.path.join(self.data_dir, data_processed_path)
@@ -39,7 +35,7 @@ class TitanicModel():
         self.test_data = data[data["PassengerId"] > 891]
 
         self.features = [
-            "Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked", "IsAdult", 
+            "Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked", "IsAdult",
             "FamSize", "hasNanny", "TicketNumber", "TicketLetter", "CabinLet", "CabinNum"
         ]
 
@@ -161,7 +157,7 @@ class TitanicModel():
         )
         print("Best ensemble weights: XGB: {:.2f}, CatBoost+PCA: {:.2f}".format(self.best_w_xgb, self.best_w_cat))
 
-    def find_best_ensemble_weights(self, 
+    def find_best_ensemble_weights(self,
                                    y_true: np.ndarray,
                                    y_pred_xgb: np.ndarray,
                                    y_pred_cat: np.ndarray,

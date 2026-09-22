@@ -18,3 +18,5 @@ Folder | Competition                                          |
 |customer| [Ensemble Learning - Machine Learning](https://www.kaggle.com/competitions/ensemble-learning-machine-learning)
 |geology| [ROGII - Wellbore Geology Prediction](https://www.kaggle.com/competitions/rogii-wellbore-geology-prediction)
 |soil_grain| [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos)
+|ellipse_packing| [Ellipse Packing Contest (Experimental)](https://www.kaggle.com/competitions/ellipse-packing-contest)
+|smartphone| [Playground Series S6E8 - Predicting Smartphone Addiction](https://www.kaggle.com/competitions/playground-series-s6e8)

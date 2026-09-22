@@ -1,7 +1,3 @@
-# Updated on April 5, 2025, 04:52 PM
-# Public Score: 38.8435
-# Rank: 59/294
-
 import os
 from typing import Tuple
 
@@ -20,17 +16,17 @@ from catboost import CatBoostRegressor
 from preprocess import Data
 
 class RussianCarModel():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         data_path = os.path.join(self.data_dir, data_processed_path)
-        
+
         data = pd.read_csv(data_path)
 
         self.train_data = data[data["id"] <= 51635].copy()
         self.test_data = data[data["id"] > 51635].copy()
-        
+
         self.test_ids = self.test_data["id"]
 
         self.X_train = self.train_data.drop(columns=["price", "id"])
@@ -108,14 +104,14 @@ class RussianCarModel():
         )
         print("Best ensemble weights: XGB: {:.2f}, CatBoost: {:.2f}".format(self.best_w_xgb, self.best_w_cat))
 
-    def find_best_ensemble_weights(self, 
+    def find_best_ensemble_weights(self,
                                    y_true: np.ndarray,
                                    y_pred_xgb: np.ndarray,
                                    y_pred_cat: np.ndarray,
                                    step: float = 0.01) -> Tuple[float, float]:
         def mae(y_true, y_pred):
             return np.mean(np.abs(y_true - y_pred))
-        
+
         best_w = 0.0
         best_mae = float("inf")
         for w in np.arange(0, 1 + step, step):
@@ -139,11 +135,10 @@ class RussianCarModel():
             "id": self.test_ids,
             "price": np.exp(ensemble_preds) + surprise_c
         })
-        
+
         output_file = os.path.join(self.data_dir, "russian_car_submission.csv")
         submission.to_csv(output_file, index=False)
         print("Submission saved to russian_car_submission.csv!")
-
 
 if __name__ == "__main__":
     data_path = "russian_car/data"

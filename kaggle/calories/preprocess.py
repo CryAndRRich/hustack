@@ -39,9 +39,9 @@ class Data():
 
     def mi_scores_dataset(self) -> pd.Series:
         df = self.data[(self.data["id"] < 750000) | (self.data["id"] > 5000000)].copy()
-        y = df.pop("Calories") 
-        df.pop("id") 
-        
+        y = df.pop("Calories")
+        df.pop("id")
+
         for colname in df.select_dtypes(["object", "category"]):
             df[colname], _ = df[colname].factorize()
 
@@ -60,41 +60,41 @@ class Data():
             df[colname] = df[colname].cat.codes
 
         scoring = {
-            "MAE":   "neg_mean_absolute_error",
-            "RMSE":  "neg_mean_squared_error"
+            "MAE": "neg_mean_absolute_error",
+            "RMSE": "neg_mean_squared_error"
         }
 
         for name, scorer in scoring.items():
             score = cross_val_score(model, df, y, cv=5, scoring=scorer).mean()
             if name == "RMSE":
                 score = np.sqrt(-score)
-            else: 
+            else:
                 score = -score
             print(f"Baseline {name}: {score:.5f}")
-            
+
     def __body_processed(self) -> None:
         self.data["BMI"] = self.data["Weight"] / np.square(self.data["Height"] / 100.0)
         self.data["BMI_Category"] = pd.cut(
-            self.data["BMI"], bins=[0, 18.5, 24.9, 29.9, 100], 
+            self.data["BMI"], bins=[0, 18.5, 24.9, 29.9, 100],
             labels=["Underweight", "Normal", "Overweight", "Obese"]
         ).astype("category")
-        
+
         self.data["BSA"] = 0.007184 * np.power(self.data["Weight"], 0.425) * np.power(self.data["Height"], 0.725)
-        
+
         bmr = 10 * self.data["Weight"] + 6.25 * self.data["Height"] - 5 * self.data["Age"]
         self.data["BMR"] = np.where(self.data["Sex"] == 0, bmr - 161, bmr + 5)
-        
+
         self.data["Max_Heart_Rate"] = 211 - 0.64 * self.data["Age"]
         self.data["Intensity"] = self.data["Heart_Rate"] / self.data["Max_Heart_Rate"]
         self.data["HR_Zone"] = pd.cut(
-            self.data["Intensity"], bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], 
+            self.data["Intensity"], bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
             labels=["Very Light", "Light", "Moderate", "Hard", "Very Hard", "Max"
         ]).astype("category")
         self.data["HR_Duration"] = self.data["Heart_Rate"] * self.data["Duration"]
         self.data["HR_Weight"] = self.data["Heart_Rate"] * self.data["Weight"]
         self.data["HR_Duration_Weight"] = self.data["Heart_Rate"] * self.data["Duration"] * self.data["Weight"]
         self.data["Body_Strain_Index"] = (self.data["Heart_Rate"] * self.data["Body_Temp"]) / self.data["Weight"]
-        
+
         def calc_tdee(row):
             intensity = row["Intensity"]
             bmr = row["BMR"]
@@ -111,9 +111,9 @@ class Data():
         self.data["TDEE"] = self.data.apply(calc_tdee, axis=1)
 
         self.data["Metabolic_Efficiency"] = self.data["BMR"] * (self.data["Heart_Rate"] / self.data["BMR"].median())
-        
+
         self.data["Thermic_Effect"] = (self.data["Body_Temp"] * 100) / (self.data["Weight"] ** 0.5)
-        
+
         self.data["Power_Output"] = self.data["Weight"] * self.data["Duration"] * (self.data["Heart_Rate"] / 1000)
         self.data["Work_Done"] = self.data["Power_Output"] * self.data["Duration"]
 
@@ -126,7 +126,6 @@ class Data():
         self.data.to_csv(output_file, index=False)
         print("Data saved to processed_data.csv!")
         return "processed_data.csv"
-
 
 if __name__ == "__main__":
     data_path = "calories/data"

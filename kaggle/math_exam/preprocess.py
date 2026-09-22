@@ -25,7 +25,7 @@ class Data():
 
     def __drop_uninformative(self) -> None:
         self.data = self.data.drop(columns=["age_bin", "mean_price_by_age_bin", "month_of_experience",
-                                            "years_of_experience", "mean_price_by_experience", 
+                                            "years_of_experience", "mean_price_by_experience",
                                             "mean_price_by_qualification",
                                             "mean_price_by_subject_binary", "total_subject_binary"])
         mi_scores = self.mi_scores_dataset()
@@ -35,8 +35,8 @@ class Data():
 
     def mi_scores_dataset(self) -> pd.Series:
         df = self.data[self.data["Id"] <= 9999].copy()
-        y = df.pop("mean_exam_points")  
-        df.pop("Id")  
+        y = df.pop("mean_exam_points")
+        df.pop("Id")
 
         for colname in df.select_dtypes(["object", "category"]):
             df[colname], _ = df[colname].factorize()
@@ -54,7 +54,7 @@ class Data():
 
         scoring = {
             "MSE": "neg_mean_squared_error",
-            "R2":  "r2"
+            "R2": "r2"
         }
 
         for name, scorer in scoring.items():
@@ -94,30 +94,30 @@ class Data():
         self.data["mean_price_by_age_bin"] = self.data.groupby("age_bin", observed=False)["lesson_price"].transform("mean")
         self.data["mean_price_by_experience"] = self.data.groupby("years_of_experience", observed=False)["lesson_price"].transform("mean")
         self.data["mean_price_by_qualification"] = self.data.groupby("qualification", observed=False)["lesson_price"].transform("mean")
-        
+
         self.data["lesson_age"] = self.data["lesson_price"] / self.data["mean_price_by_age_bin"]
         self.data["lesson_experience"] = self.data["lesson_price"] / self.data["mean_price_by_experience"]
         self.data["lesson_qualification"] = self.data["lesson_price"] / self.data["mean_price_by_qualification"]
 
     def __subject_processed(self) -> None:
-        self.data["total_subject"] = (self.data["physics"] + self.data["chemistry"] + 
-                                      self.data["biology"] + self.data["english"] + 
+        self.data["total_subject"] = (self.data["physics"] + self.data["chemistry"] +
+                                      self.data["biology"] + self.data["english"] +
                                       self.data["geography"] + self.data["history"])
-        
-        self.data["total_subject_binary"] = (self.data["physics"] * 2 ** 5 + self.data["chemistry"] * 2 ** 4 + 
-                                             self.data["biology"] * 2 ** 3 + self.data["english"] * 2 ** 2 + 
+
+        self.data["total_subject_binary"] = (self.data["physics"] * 2 ** 5 + self.data["chemistry"] * 2 ** 4 +
+                                             self.data["biology"] * 2 ** 3 + self.data["english"] * 2 ** 2 +
                                              self.data["geography"] * 2 ** 1 + self.data["history"])
-        
+
         self.data["mean_price_by_subject_binary"] = self.data.groupby("total_subject_binary", observed=False)["lesson_price"].transform("mean")
         self.data["lesson_subject_binary"] = self.data["lesson_price"] / self.data["mean_price_by_subject_binary"]
 
     def __k_means(self) -> None:
-        cluster_features = ["lesson_subject_binary", "lesson_experience", "square_price", 
+        cluster_features = ["lesson_subject_binary", "lesson_experience", "square_price",
                             "lesson_qualification", "lesson_age"]
-        
+
         X = self.data.loc[:, cluster_features]
         X_scaled = (X - X.mean(axis=0)) / X.std(axis=0)
-        
+
         kmeans = KMeans(n_clusters=10, n_init=50, random_state=0)
         self.data["cluster"] = kmeans.fit_predict(X_scaled)
 
@@ -133,7 +133,6 @@ class Data():
         self.data.to_csv(output_file, index=False)
         print("Data saved to processed_data.csv!")
         return "processed_data.csv"
-
 
 if __name__ == "__main__":
     data_path = "math_exam/data"

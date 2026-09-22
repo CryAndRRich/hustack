@@ -7,7 +7,7 @@ from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_val_score
 from xgboost import XGBRegressor
 
-from data.supplemental_english import * # type: ignore
+from data.supplemental_english import *
 
 class Data():
     def __init__(self, data_path: str) -> None:
@@ -18,43 +18,43 @@ class Data():
 
         train_data = pd.read_csv(train_file_path)
         test_data = pd.read_csv(test_file_path)
-        
+
         self.data = pd.concat([train_data, test_data], axis=0, ignore_index=True)
 
     def __drop_uninformative(self) -> None:
         cols_to_keep = self.mi_scores_dataset().index.tolist()
-        cols_to_keep += ["id", "price"] 
+        cols_to_keep += ["id", "price"]
         self.data = self.data.loc[:, self.data.columns.isin(cols_to_keep)]
 
     def mi_scores_dataset(self) -> pd.Series:
         X = self.data[self.data["id"] <= 51635].copy()
-        y = X.pop("price") 
+        y = X.pop("price")
 
         for colname in X.select_dtypes(["object", "category"]):
             X[colname], _ = X[colname].factorize()
-            
+
         discrete_features = [pd.api.types.is_integer_dtype(t) for t in X.dtypes]
-        
+
         mi_scores = mutual_info_regression(X, y, discrete_features=discrete_features, random_state=0)
         mi_scores = pd.Series(mi_scores, name="MI Scores", index=X.columns)
         mi_scores = mi_scores.sort_values(ascending=False)
-        mi_scores = mi_scores[mi_scores > 10e-6]  
+        mi_scores = mi_scores[mi_scores > 10e-6]
 
         return mi_scores
 
     def baseline_score_dataset(self, model: XGBRegressor = XGBRegressor()) -> None:
         X = self.data[self.data["id"] <= 51635].copy()
-        y = X.pop("price")  
-        
+        y = X.pop("price")
+
         log_y = np.log(y)
 
         for colname in X.select_dtypes(["object", "category"]):
             X[colname], _ = X[colname].factorize()
-        
+
         rmsle = np.sqrt(-cross_val_score(
             model, X, log_y, cv=5, scoring="neg_mean_squared_error"
         ).mean())
-        
+
         mae = -cross_val_score(
             model, X, y, cv=5, scoring="neg_mean_absolute_error"
         ).mean()
@@ -71,7 +71,7 @@ class Data():
         print(f"Baseline RMSLE: {rmsle:.5f}")
         print(f"Baseline MAE: {mae:.5f}")
         print(f"Baseline SMAPE: {smape_score:.5f}")
-    
+
     def __plate_processed(self):
         def split_plate(row):
             first_letter = row[0]
@@ -89,17 +89,17 @@ class Data():
         def has_repeated(x):
             x = str(x)
             return int(len(set(x)) < len(x))
-        
+
         def has_sequential_numbers(num):
-            n_str = str(num).zfill(3)  
+            n_str = str(num).zfill(3)
             seq_up = ["123", "234", "345", "456", "567", "678", "789"]
             seq_down = ["987", "876", "765", "654", "543", "432", "321"]
             return any(seq in n_str for seq in seq_up) or any(seq in n_str for seq in seq_down)
-        
+
         def has_mirror(x):
             x = str(x)
             return int(x == x[::-1])
-        
+
         self.data["has_repeated_letters"] = self.data["combine"].apply(has_repeated)
         self.data["has_mirror_letters"] = self.data["combine"].apply(has_mirror)
 
@@ -122,7 +122,7 @@ class Data():
 
         self.data["days_from_initial_listing"] = self.data.groupby("combine")["date"].transform("min")
         self.data["days_from_initial_listing"] = (self.data["date"] - self.data["days_from_initial_listing"]).dt.days
-        
+
         self.data["months_from_initial_listing"] = round(self.data["days_from_initial_listing"] / 30, 3)
         self.data["years_from_initial_listing"] = round(self.data["months_from_initial_listing"] / 12, 3)
 
@@ -130,7 +130,7 @@ class Data():
 
         self.data["listing_num"] = self.data.groupby("combine")["date"].rank(method="dense").astype(int)
         self.data["date"] = self.data["date"].dt.date
-    
+
     def __supplemental_processed(self):
         def supple_region_detail(row):
             region_code = row["region_code"]
@@ -139,7 +139,7 @@ class Data():
                 if str(region_code) in codes:
                     return region_name
             return "None"
-            
+
         def supple_government_detail(row):
             letter = row["combine"]
             region_code = row["region_code"]
@@ -147,7 +147,7 @@ class Data():
             for (code_letters, _, region), details in GOVERNMENT_CODES.items():
                 if letter == code_letters and region_code == int(region):
                     return details[2], details[3]
-            
+
             return 0, 0
 
         self.data[["region_name"]] = self.data.apply(
@@ -169,10 +169,10 @@ class Data():
             for j in available:
                 exceptional_str.add(i + j + i)
         exceptional_num = set([
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 
+            1, 2, 3, 4, 5, 6, 7, 8, 9,
             10, 20, 30, 40, 50, 60, 70, 80, 90,
-            100, 200, 300, 400, 500, 600, 700, 800, 900, 
-            123, 234, 345, 456, 567, 678, 789, 
+            100, 200, 300, 400, 500, 600, 700, 800, 900,
+            123, 234, 345, 456, 567, 678, 789,
             987, 876, 765, 654, 543, 432, 321
         ])
         for i in range(1, 10):
@@ -186,7 +186,7 @@ class Data():
             if combine in exceptional_str or number in exceptional_num or region_code in exceptional_num:
                 return 1
             return 0
-        
+
         self.data[["prestigious"]] = self.data.apply(
             lambda x: pd.Series(check_higher_price(x)),
             axis=1
@@ -202,7 +202,7 @@ class Data():
 
         avg_price_by_first_letter = valid_prices.groupby("first_letter")["price"].mean()
         self.data["avg_price_by_first_letter"] = self.data["first_letter"].map(avg_price_by_first_letter)
-        
+
         avg_price_by_second_letter = valid_prices.groupby("second_letter")["price"].mean()
         self.data["avg_price_by_second_letter"] = self.data["second_letter"].map(avg_price_by_second_letter)
 
@@ -236,7 +236,7 @@ class Data():
 if __name__ == "__main__":
     data_path = "russian_car/data"
     data = Data(data_path)
-    
+
     data.data_processed()
     data.baseline_score_dataset()
     data.save_csv()

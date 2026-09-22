@@ -25,7 +25,7 @@ class Data():
             self.data[col] = self.data[col].fillna(0)
         for col in self.data.select_dtypes(include=["object", "category"]).columns:
             self.data[col] = self.data[col].fillna(self.data[col].mode()[0])
-            
+
         self.data["sale_price"] = np.log1p(self.data["sale_price"])
 
     def __drop_uninformative(self) -> None:
@@ -36,7 +36,7 @@ class Data():
                        "view_otherwater", "view_other", "wfnt", "golf",
                        "greenbelt", "noise_traffic"]
         )
-        
+
         mi_scores = self.mi_scores_dataset()
         cols_to_keep = mi_scores[mi_scores > 0.0].index.tolist()
         cols_to_keep += ["id", "sale_price"]
@@ -45,8 +45,8 @@ class Data():
 
     def mi_scores_dataset(self) -> pd.Series:
         df = self.data[self.data["id"] <= 199999].copy()
-        y = df.pop("sale_price") 
-        df.pop("id") 
+        y = df.pop("sale_price")
+        df.pop("id")
 
         categorical_features = df.select_dtypes(include=["object", "category"]).columns.tolist()
         categorical_features += ["grade", "fbsmt_grade", "condition"]
@@ -81,7 +81,7 @@ class Data():
             score = cross_val_score(model, df, y, cv=5, scoring=scorer).mean()
             if name == "RMSE":
                 score = np.sqrt(-score)
-            else: 
+            else:
                 score = -score
             print(f"Baseline {name}: {score:.5f}")
 
@@ -96,35 +96,35 @@ class Data():
     def __house_processed(self) -> None:
         self.data["bath"] = (
             self.data["bath_full"] +
-            0.75 * self.data["bath_3qtr"] + 
+            0.75 * self.data["bath_3qtr"] +
             0.5 * self.data["bath_half"]
         )
-        
+
         self.data["living_sqft"] = np.sqrt(
-            self.data["sqft"] ** 2 + 
+            self.data["sqft"] ** 2 +
             self.data["sqft_fbsmt"] ** 2
         )
         self.data["total_living_sqft"] = self.data["sqft"] + self.data["sqft_fbsmt"]
         self.data["total_non_living_sqft"] = self.data["sqft_lot"] + self.data["gara_sqft"] + self.data["garb_sqft"]
-        self.data["total_rooms"] = self.data["beds"] + self.data["bath"] 
+        self.data["total_rooms"] = self.data["beds"] + self.data["bath"]
 
         self.data["view"] = (
-            self.data["view_rainier"] + self.data["view_olympics"] + 
-            self.data["view_cascades"] + self.data["view_territorial"] + 
-            self.data["view_skyline"] + self.data["view_sound"] + 
-            self.data["view_lakewash"] + self.data["view_lakesamm"] + 
+            self.data["view_rainier"] + self.data["view_olympics"] +
+            self.data["view_cascades"] + self.data["view_territorial"] +
+            self.data["view_skyline"] + self.data["view_sound"] +
+            self.data["view_lakewash"] + self.data["view_lakesamm"] +
             self.data["view_otherwater"] + self.data["view_other"] +
             self.data["wfnt"] + self.data["golf"] +
             self.data["greenbelt"] + self.data["noise_traffic"]
         )
-        
+
         self.data["stories_living_interact"] = self.data["stories"] * self.data["living_sqft"]
         self.data["stories_tot_living_interact"] = self.data["stories"] * self.data["total_living_sqft"]
-        
+
         self.data["total_val"] = self.data["land_val"] + self.data["imp_val"]
         self.data["mul_val_log"] = np.log1p(self.data["land_val"] * self.data["imp_val"])
         self.data["view_mul_val"] = np.log1p(self.data["total_val"] * self.data["view"])
-        
+
         self.data["grade_mul_log_living"] = self.data["grade"] * np.log1p(self.data["living_sqft"])
         self.data["grade_all"] = (self.data["grade"] + self.data["fbsmt_grade"]) / 2
         self.data["grade_cond_str"] = self.data["grade"].astype(str) + "_" + self.data["condition"].astype(str)
@@ -148,13 +148,13 @@ class Data():
             "PLEASANT VALLEY", "RENTON", "MOORLAND", "TIMBERLANE", "NORTHEND", "LAKE FOREST",
             "CEDARHURST", "REDMOND", "SQUIRES", "SNOQUALMIE", "YORK", "UNIVERSITY", "LICTON",
             "RENAISSANCE", "QUEEN", "WOODLAND PARK", "OLYMPIC", "SOUTHERN PACIFIC", "SKYWAY",
-            "JOVITA", "WHITE", "LAKEWOOD", "BRIDGES", "WESTHOLME", "LAKE SIDE", "HAWTHORNE", 
-            "SOMERVILLE", "TIMBERLINE", "VICTORY", "TWIN LAKES", "MADISON", "PONTIAC", "LAKE RIDGE", 
-            "WILDERNESS", "HALLER LAKE", "MERIDIAN", "WALLA", "BURNS", "ROXBURY", "AUBURN", 
-            "HOMEWOOD", "LAGO", "KINGSGATE", "NORMANDY", "BOWMAN", "BLUE", "MOORLANDS", "EDES", 
+            "JOVITA", "WHITE", "LAKEWOOD", "BRIDGES", "WESTHOLME", "LAKE SIDE", "HAWTHORNE",
+            "SOMERVILLE", "TIMBERLINE", "VICTORY", "TWIN LAKES", "MADISON", "PONTIAC", "LAKE RIDGE",
+            "WILDERNESS", "HALLER LAKE", "MERIDIAN", "WALLA", "BURNS", "ROXBURY", "AUBURN",
+            "HOMEWOOD", "LAGO", "KINGSGATE", "NORMANDY", "BOWMAN", "BLUE", "MOORLANDS", "EDES",
             "FAIRWOOD", "LAURELHURST", "EXPOSITION", "GREENE", "KLAHANIE", "DES MOINES",
-            "SUNRISE", "PATRICK", "GUNTHERS", "LOYAL", "KATESRIDGE", "LAWS", "STIXRUDS", 
-            "BALTIMORE", "FAUNTLEROY", "LAKE HILLS", "ALDERWOOD", "BEVERLY", "EUCLID", "SNOQUALMIE", 
+            "SUNRISE", "PATRICK", "GUNTHERS", "LOYAL", "KATESRIDGE", "LAWS", "STIXRUDS",
+            "BALTIMORE", "FAUNTLEROY", "LAKE HILLS", "ALDERWOOD", "BEVERLY", "EUCLID", "SNOQUALMIE",
             "TROSSACHS", "JACKSONS", "CUMBERLAND", "SYLVAN", "GREENWOOD", "HOME GARDENS", "CLAREMONT",
             "GEORGETOWN", "MORNINGSIDE", "PEARL", "SOUTH SHORE", "HILL TRACT", "BEAVERDAM", "EVANS",
             "BROADMOOR", "FRONT STREET", "CROWN HILL", "HAMBLETS", "EASTWOOD", "REGENCY",
@@ -202,13 +202,12 @@ class Data():
         self.__location_processed()
         self.__k_means()
         self.__drop_uninformative()
-    
+
     def save_csv(self) -> str:
         output_file = os.path.join(self.data_dir, "processed_data.csv")
         self.data.to_csv(output_file, index=False)
         print("Data saved to processed_data.csv!")
         return "processed_data.csv"
-
 
 if __name__ == "__main__":
     data_path = "housing_price2/data"

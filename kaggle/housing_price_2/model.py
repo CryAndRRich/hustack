@@ -1,7 +1,3 @@
-# Updated on June 30, 2025, 03:43 PM
-# Public Score: 360007.28
-# Rank: 155/394
-
 import os
 import numpy as np
 import pandas as pd
@@ -16,8 +12,8 @@ from catboost import CatBoostRegressor
 
 from preprocess import Data
 
-def winkler_score_batch(y_true: np.ndarray, 
-                        y_lower: np.ndarray, 
+def winkler_score_batch(y_true: np.ndarray,
+                        y_lower: np.ndarray,
                         y_upper: np.ndarray) -> np.ndarray:
     interval_width = y_upper - y_lower
     penalty = np.zeros_like(y_true, dtype=float)
@@ -35,8 +31,8 @@ def winkler_score_batch(y_true: np.ndarray,
     return interval_width + penalty
 
 
-def winkler_scorer(estimator, 
-                   X: np.ndarray, 
+def winkler_scorer(estimator,
+                   X: np.ndarray,
                    y: np.ndarray) -> float:
     preds = estimator.predict(X)
     lower, upper = preds[:, 0], preds[:, 1]
@@ -44,9 +40,9 @@ def winkler_scorer(estimator,
 
 
 class DoubleQuantileCat(Pipeline, BaseEstimator, RegressorMixin):
-    def __init__(self, 
-                 params, 
-                 alpha_lower: float = 0.05, 
+    def __init__(self,
+                 params,
+                 alpha_lower: float = 0.05,
                  alpha_upper: float = 0.95) -> None:
         self.params = params
         self.alpha_lower = alpha_lower
@@ -63,8 +59,8 @@ class DoubleQuantileCat(Pipeline, BaseEstimator, RegressorMixin):
         ]
         super().__init__(steps=steps)
 
-    def fit(self, 
-            X: np.ndarray, 
+    def fit(self,
+            X: np.ndarray,
             y: np.ndarray) -> None:
         X_t = self.named_steps["preprocessor"].fit_transform(X, y)
 
@@ -92,8 +88,8 @@ class DoubleQuantileCat(Pipeline, BaseEstimator, RegressorMixin):
 
 
 class HousingPrice2Model():
-    def __init__(self, 
-                 data_path: str, 
+    def __init__(self,
+                 data_path: str,
                  data_processed_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         data_path = os.path.join(self.data_dir, data_processed_path)
@@ -116,13 +112,13 @@ class HousingPrice2Model():
     def _bayes_opt(self) -> None:
         cv = KFold(n_splits=5, shuffle=True, random_state=42)
 
-        def cat_cv_winkler(depth: float, 
-                           learning_rate: float, 
-                           subsample: float, 
+        def cat_cv_winkler(depth: float,
+                           learning_rate: float,
+                           subsample: float,
                            colsample_bylevel: float,
-                           l2_leaf_reg: float, 
-                           bagging_temperature: float, 
-                           random_strength: float, 
+                           l2_leaf_reg: float,
+                           bagging_temperature: float,
+                           random_strength: float,
                            border_count: float) -> float:
             params = {
                 "iterations": 1000,
@@ -180,7 +176,6 @@ class HousingPrice2Model():
         })
         submission.to_csv("housing_price2_submission.csv", index=False)
         print("Submission saved to housing_price2_submission.csv")
-
 
 if __name__ == "__main__":
     data_path = "housing_price_2/data"

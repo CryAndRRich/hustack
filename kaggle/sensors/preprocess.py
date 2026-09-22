@@ -33,7 +33,6 @@ class Data():
         print("Data saved to processed_data.csv!")
         return "processed_data.csv"
 
-
 if __name__ == "__main__":
     data_path = "sensors/data"
     data = Data(data_path)

@@ -10,34 +10,33 @@ from xgboost import XGBRegressor
 
 def clean(df: pd.DataFrame) -> pd.DataFrame:
     df["Exterior2nd"] = df["Exterior2nd"].replace({"Brk Cmn": "BrkComm"})
-    
+
     df["GarageYrBlt"] = df["GarageYrBlt"].where(df.GarageYrBlt <= 2010, df.YearBuilt)
-    
+
     df.rename(columns={
         "1stFlrSF": "FirstFlrSF",
         "2ndFlrSF": "SecondFlrSF",
         "3SsnPorch": "Threeseasonporch",
         "FireplaceQu": "FireplaceQual"
     }, inplace=True)
-    
+
     return df
 
 
 def impute(df: pd.DataFrame) -> pd.DataFrame:
     for name in df.select_dtypes("number"):
         df[name] = df[name].fillna(df[name].median())
-    
+
     for name in df.select_dtypes("category"):
         df[name] = df[name].fillna("None")
-    
+
     return df
 
-
 features_nom = [
-    "MSSubClass", "MSZoning", "Street", "Alley", "LandContour", 
-    "LotConfig", "Neighborhood", "Condition1", "Condition2", "BldgType", 
-    "HouseStyle", "RoofStyle", "RoofMatl", "Exterior1st", "Exterior2nd", 
-    "MasVnrType", "Foundation", "Heating", "CentralAir", "GarageType", 
+    "MSSubClass", "MSZoning", "Street", "Alley", "LandContour",
+    "LotConfig", "Neighborhood", "Condition1", "Condition2", "BldgType",
+    "HouseStyle", "RoofStyle", "RoofMatl", "Exterior1st", "Exterior2nd",
+    "MasVnrType", "Foundation", "Heating", "CentralAir", "GarageType",
     "MiscFeature", "SaleType", "SaleCondition"
 ]
 
@@ -79,11 +78,11 @@ def encode(df: pd.DataFrame) -> pd.DataFrame:
         df[name] = df[name].astype("category")
         if "None" not in df[name].cat.categories:
             df[name] = df[name].cat.add_categories("None")
-    
+
     for name, levels in ordered_levels.items():
         try:
             df[name] = df[name].astype(pd.CategoricalDtype(levels, ordered=True))
-        except Exception as e:
+        except Exception:
             continue
     return df
 
@@ -97,9 +96,9 @@ class Data():
 
         train_data = pd.read_csv(train_file_path)
         test_data = pd.read_csv(test_file_path)
-        
+
         self.data = pd.concat([train_data, test_data], axis=0, ignore_index=True)
-        
+
         self.data = clean(self.data)
         self.data = encode(self.data)
         self.data = impute(self.data)
@@ -114,12 +113,12 @@ class Data():
         X = self.data[self.data["Id"] <= 1460].copy()
         y = X.pop("SalePrice")
         X.pop("Id")
-        
+
         for colname in X.select_dtypes(["object", "category"]):
             X[colname], _ = X[colname].factorize()
-        
+
         discrete_features = [pd.api.types.is_integer_dtype(t) for t in X.dtypes]
-        
+
         mi_scores = mutual_info_regression(X, y, discrete_features=discrete_features, random_state=0)
         mi_scores = pd.Series(mi_scores, name="MI Scores", index=X.columns)
         mi_scores = mi_scores.sort_values(ascending=False)
@@ -129,20 +128,20 @@ class Data():
         X = self.data[self.data["Id"] <= 1460].copy()
         y = X.pop("SalePrice")
         X.pop("Id")
-        
+
         for colname in X.select_dtypes(["category"]):
             X[colname] = X[colname].cat.codes
-        
+
         log_y = np.log(y)
-        
+
         rmsle = np.sqrt(-cross_val_score(
             model, X, log_y, cv=5, scoring="neg_mean_squared_error"
         ).mean())
-        
+
         mae = -cross_val_score(
             model, X, log_y, cv=5, scoring="neg_mean_absolute_error"
         ).mean()
-        
+
         print(f"Baseline RMSLE: {rmsle:.5f}")
         print(f"Baseline MAE (log scale): {mae:.5f}")
 
@@ -158,7 +157,7 @@ class Data():
     def __area_processed(self) -> None:
         self.data["TotalArea"] = self.data["GrLivArea"] + self.data["TotalBsmtSF"]
         self.data["TotalSF"] = self.data["FirstFlrSF"] + self.data["SecondFlrSF"] + self.data["BsmtFinSF1"] + self.data["BsmtFinSF2"]
-        
+
         self.data["LivAreaRatio"] = self.data["GrLivArea"] / self.data["TotalSF"]
         self.data["LivLotRatio"] = self.data["GrLivArea"] / self.data["LotArea"]
         self.data["RmsPerSqft"] = self.data["TotRmsAbvGrd"] / self.data["GrLivArea"]
@@ -180,7 +179,7 @@ class Data():
         self.data["OverallCond"] = pd.to_numeric(self.data["OverallCond"], errors="coerce")
 
         self._fill_overallqual()
-        
+
         self.data["OverallAvg"] = ((self.data["OverallQual"] + self.data["OverallCond"]) / 2).round().astype("int")
         self.data["QualSF"] = self.data["TotalSF"] * self.data["OverallQual"]
         self.data["NhbQual"] = self.data.groupby("Neighborhood", observed=False)["OverallQual"].transform("median")
@@ -197,7 +196,7 @@ class Data():
             self.data[feat + "Num"] = self.data[feat].map(qual_mapping)
             median_val = self.data[feat + "Num"].median()
             self.data[feat + "Num"] = self.data[feat + "Num"].fillna(median_val)
-        
+
         num_cols = [feat + "Num" for feat in quality_features]
         self.data["CompositeQual"] = self.data[num_cols].mean(axis=1)
 
@@ -206,45 +205,45 @@ class Data():
         self.data["BsmtQual"] = self.data["BsmtQual"].astype("category")
         self.data["FireplaceQual"] = self.data["FireplaceQual"].astype("category")
         self.data["GarageQual"] = self.data["GarageQual"].astype("category")
-    
+
     def _fill_overallqual(self) -> None:
         features = [
-            "ExterQual", "BsmtQual", "KitchenQual", "Neighborhood", 
+            "ExterQual", "BsmtQual", "KitchenQual", "Neighborhood",
             "GrLivArea", "GarageArea", "YearBuilt", "YearRemodAdd"
         ]
 
         known = self.data[self.data["OverallQual"].notna()].copy()
         unknown = self.data[self.data["OverallQual"].isna()].copy()
-        
+
         X_train = pd.get_dummies(known[features])
         y_train = known["OverallQual"]
-        
+
         model = RandomForestRegressor(n_estimators=100, random_state=42)
         model.fit(X_train, y_train)
-        
+
         X_unknown = pd.get_dummies(unknown[features])
         X_unknown = X_unknown.reindex(columns=X_train.columns, fill_value=0)
-        
+
         predicted = model.predict(X_unknown)
-        
+
         self.data.loc[self.data["OverallQual"].isna(), "OverallQual"] = np.round(predicted).astype(int)
-    
+
     def __basement_processed(self) -> None:
         qual_mapping = {"NA": 0, "Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5}
         self.data["BsmtQual"] = self.data["BsmtQual"].astype(str)
         self.data["BsmtCond"] = self.data["BsmtCond"].astype(str)
         self.data["BsmtQualNum"] = self.data["BsmtQual"].map(qual_mapping)
         self.data["BsmtCondNum"] = self.data["BsmtCond"].map(qual_mapping)
-        
+
         self.data["BsmtQual"] = self.data["BsmtQual"].astype("category")
         self.data["BsmtCond"] = self.data["BsmtCond"].astype("category")
-        
+
         self.data["BsmtQualNum"] = self.data["BsmtQualNum"].fillna(0)
         self.data["BsmtCondNum"] = self.data["BsmtCondNum"].fillna(0)
         self.data["BsmtQualityScore"] = np.round((self.data["BsmtQualNum"] + self.data["BsmtCondNum"]) / 2.0).astype(int)
-    
+
     def __porch_processed(self) -> None:
-        self.data["PorchTypes"] = self.data[[ 
+        self.data["PorchTypes"] = self.data[[
             "WoodDeckSF",
             "OpenPorchSF",
             "EnclosedPorch",
@@ -262,22 +261,22 @@ class Data():
 
     def __k_means(self) -> None:
         cluster_features = ["LotArea", "TotalBsmtSF", "FirstFlrSF", "SecondFlrSF", "GrLivArea"]
-        
+
         X_scaled = self.data.loc[:, cluster_features]
         X_scaled = (X_scaled - X_scaled.mean(axis=0)) / X_scaled.std(axis=0)
-        
+
         kmeans = KMeans(n_clusters=20, n_init=50, random_state=0)
-        
+
         self.data["Cluster"] = kmeans.fit_predict(X_scaled)
-        
+
         distances = kmeans.transform(X_scaled)
-        
+
         distances_df = pd.DataFrame(
-            distances, 
+            distances,
             columns=[f"Centroid{i}" for i in range(distances.shape[1])],
             index=self.data.index
         )
-        
+
         self.data = self.data.join(distances_df)
 
     def data_processed(self) -> None:
@@ -297,11 +296,10 @@ class Data():
         print("Data saved to processed_data.csv!")
         return self.output
 
-
 if __name__ == "__main__":
     data_path = "housing_price/data"
     data = Data(data_path)
-    
+
     data.data_processed()
     data.baseline_score_dataset()
     data.save_csv()

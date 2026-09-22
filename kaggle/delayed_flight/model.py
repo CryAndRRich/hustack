@@ -1,7 +1,3 @@
-# Updated on May 15, 2025, 9:58 PM
-# Public Score: 0.73750
-# Rank: 1186/2205
-
 import os
 
 import pandas as pd

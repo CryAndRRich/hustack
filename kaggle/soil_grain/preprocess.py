@@ -19,14 +19,14 @@ GRAIN_NAMES = [
 ]
 IMG_SIZE = 512
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
-IMAGENET_STD  = [0.229, 0.224, 0.225]
+IMAGENET_STD = [0.229, 0.224, 0.225]
 
 
 class Data:
     def __init__(self, data_path: str) -> None:
         self.data_dir = os.path.join(os.getcwd(), data_path)
         self.train_df = pd.read_csv(os.path.join(self.data_dir, "train.csv"))
-        self.test_df  = pd.read_csv(os.path.join(self.data_dir, "test.csv"))
+        self.test_df = pd.read_csv(os.path.join(self.data_dir, "test.csv"))
         self.sample_sub = pd.read_csv(os.path.join(self.data_dir, "sample_submission.csv"))
 
         _non_target = {
@@ -92,7 +92,6 @@ class MorphGranulometry:
         s = feats.sum()
         return feats / s if s > 0 else feats
 
-
 _TRAIN_AUG = T.Compose([
     T.RandomResizedCrop(IMG_SIZE, scale=(0.7, 1.0)),
     T.RandomHorizontalFlip(),
@@ -148,7 +147,6 @@ class SoilDataset(Dataset):
             )
             return img_tensor, domain_feat, target
         return img_tensor, domain_feat
-
 
 if __name__ == "__main__":
     data = Data("soil_grain/data")
