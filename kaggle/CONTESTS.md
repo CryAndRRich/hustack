@@ -20,3 +20,8 @@ Folder | Competition                                          |
 |soil_grain| [Predicting Soil Grain Size Distributions from Images](https://www.kaggle.com/competitions/soil-grain-size-from-photos)
 |ellipse_packing| [Ellipse Packing Contest (Experimental)](https://www.kaggle.com/competitions/ellipse-packing-contest)
 |smartphone| [Playground Series S6E8 - Predicting Smartphone Addiction](https://www.kaggle.com/competitions/playground-series-s6e8)
+|housing_affordability| [Predicting Housing Affordability in the U.S.](https://www.kaggle.com/competitions/predicting-housing-affordability-in-the-u-s)
+|oil_gas| [Classification of oil and gas](https://www.kaggle.com/competitions/classification-of-oil-and-gas)
+|second_housing_price| [Second-hand housing price per unit area pred](https://www.kaggle.com/competitions/ywiccml2025)
+|tutor| [Tutors - lessons prices](https://www.kaggle.com/competitions/tutors-lessons-prices)
+|student_score| [seKer AI Student Score Challenge](https://www.kaggle.com/competitions/seker-ai-student-score-challenge)
