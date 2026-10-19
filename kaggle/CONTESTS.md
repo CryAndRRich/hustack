@@ -25,3 +25,4 @@ Folder | Competition                                          |
 |second_housing_price| [Second-hand housing price per unit area pred](https://www.kaggle.com/competitions/ywiccml2025)
 |tutor| [Tutors - lessons prices](https://www.kaggle.com/competitions/tutors-lessons-prices)
 |student_score| [seKer AI Student Score Challenge](https://www.kaggle.com/competitions/seker-ai-student-score-challenge)
+|expression| [ML2026 FALL HW2](https://www.kaggle.com/competitions/ml-2026-fall-hw-2)
