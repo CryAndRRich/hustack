@@ -54,3 +54,7 @@ Folder | Competition                                          |
 |shopaholic| [Shopaholic Detector](https://www.kaggle.com/competitions/shopaholic-detector-cse)
 |obscura| [OBSCURA](https://www.kaggle.com/competitions/obscura)
 |recommender| [SKKU ESW4024 Recommender System](https://www.kaggle.com/competitions/skku-esw-4024-recommender-system)
+|meaworm| [Meaworm Tech QuanLLM - IoT Attack Detection (Nov 2026)](https://www.kaggle.com/competitions/meaworm-tech-quanllm-iot-attack-detection-nov-2026)
+|telco| [[HAMIC] No Null November 2026 - Telco Churn Challenge](https://www.kaggle.com/competitions/hamic-no-null-november-2026-telco-churn-challenge)
+|electricity| [AIMS 2y Diwali Gift Part-2](https://www.kaggle.com/competitions/aims-2-y-diwali-gift-part-2)
+|maintainability| [Predict Software Maintainability from Code Metrics](https://www.kaggle.com/competitions/predict-software-maintainability-from-code-metrics)
