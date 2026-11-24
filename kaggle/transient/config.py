@@ -1,0 +1,61 @@
+from dataclasses import dataclass
+
+
+@dataclass
+class Config:
+    val_from: str = "2026-08-01"
+    jump: float = 0.1
+    pmu4_late_from: str = "2026-12-01"
+    pmu4_late_to: str = "2026-12-15"
+    pmu4_late_frames: int = 4
+    p45_flip_from: str = "2026-12-01"
+    pg2_stuck: float = 0.8517
+    bus7_loss: float = 0.024
+    reclose_settle_s: float = 0.15
+    inertia_days: float = 2.0
+    inertia_min: int = 15
+    inertia_clip: tuple = (0.5, 2.0)
+    bag_seeds: tuple = (0, 1, 2)
+    cpu_threads: int = 4
+    cat_iters: int = 1500
+    cat_lr: float = 0.05
+    cat_depth: int = 6
+    tabpfn_estimators: int = 4
+    tabpfn_max_rows: int = 9000
+    tabpfn_batch: int = 2000
+    gru_hidden: int = 64
+    gru_epochs: int = 8
+    gru_batch: int = 1024
+    gru_lr: float = 0.002
+    blend_step: float = 0.1
+    fast_clear_s: float = 0.15
+    share_days: float = 4.0
+    share_min: int = 5
+    prior_x: tuple = (0.15, 0.5, 0.85)
+    prior_rf: tuple = (0.0, 0.01, 0.03)
+    locate_x: tuple = tuple(round(0.025 + 0.05 * i, 3) for i in range(20))
+    locate_rf: tuple = (0.0, 0.005, 0.01, 0.02, 0.03, 0.04)
+    damping: float = 0.0
+    horizon: float = 1.5
+    damping_grid: tuple = (0.0, 1.0, 3.0)
+    horizon_grid: tuple = (1.5, 3.0)
+    dynamics_events: int = 1500
+    reclose_dead_s: float = 0.3
+    reclose_refault_s: float = 0.08
+    reclose_margin: float = 0.05
+    safety: tuple = (0.75, 1.0, 1.5, 2.0)
+    pseudo_min_ms: int = 300
+    hard_lo: float = 0.02
+    hard_hi: float = 0.98
+    test_weights: tuple = (1.0, 3.0)
+    folds: int = 5
+    pseudo_rounds: int = 2
+    leaves: int = 31
+    lr: float = 0.03
+    rounds: int = 3000
+    early_stop: int = 200
+    seed: int = 0
+    work_dir: str = "/tmp/work"
+    scratch_dir: str = "/tmp/scratch"
+    code_dir: str = "/tmp/code"
+    submission_name: str = "submission.csv"

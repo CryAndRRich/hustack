@@ -8,7 +8,7 @@ from scipy.linalg import cho_factor, cho_solve
 from scipy.optimize import minimize
 from sklearn.ensemble import HistGradientBoostingRegressor
 
-from v1_preprocess import OUT, describe, load, log
+from kriging_preprocess import OUT, describe, load, log
 
 N_REPEATS = 50
 SEED = 0
